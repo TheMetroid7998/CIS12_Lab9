@@ -1,5 +1,5 @@
 
-import json
+import json, os, random
 
 LIBRARY = 3
 LINE = 128
@@ -65,12 +65,43 @@ def save_file(filepath, element):
     with open(filepath, 'w') as output:
         json.dump(element, output, indent=4)
 
+def process_books(*filepaths):
+    for path in filepaths:
+        read_book(path)
+
+def load_file(filepath, *books, reverse=False):
+    if os.path.exists(filepath):
+        with open(filepath, 'r') as book:
+            return json.load(book)
+    else:
+        process_books(*books)
+        if reverse:
+            save_file(filepath, pages)
+            return pages
+        codebook = generate_codebook()
+        save_file(filepath, codebook)
+
+def encrypt(codebook, message):
+    ciphertext = []
+    for char in message:
+        index = random.randint(0, len(codebook[char]) - 1)
+        ciphertext.append(codebook[char].pop(index))
+    return '-'.join(ciphertext)
+
+
+def decrypt(rev_book, ciphertext):
+    plaintext = []
+    for char in ciphertext:
+        pass
+    return ''.join(plaintext)
+
+
 def main():
-    book = 'books/dr_jekyll.txt'
-    read_book(book)
-    codebook = generate_codebook()
-    save_file('codebooks/codebook.json', codebook)
-    save_file('codebooks/pages.json', pages)
+    books = ('books/dr_jekyll.txt', 'books/shakespeare.txt', 'books/war_and_peace.txt')
+    codebook_path = 'codebooks/cd.json'
+    rev_book_path = 'codebooks/rv.json'
+    codebook = load_file(codebook_path, books)
+    reverse_book = load_file(rev_book_path, books, reverse=True)
 
 if __name__ == '__main__':
     main()
