@@ -108,7 +108,7 @@ def main():
     while True:
         try:
             mode = m_menu()
-            match(mode):
+            match mode:
                 case 1:
                     codebook = load_file(codebook_path, *books)
                     message = input("Enter plaintext: \n")
