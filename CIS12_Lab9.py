@@ -1,5 +1,5 @@
 
-import json, os, random
+import json, os, random, re, sys
 
 LIBRARY = 3
 LINE = 128
@@ -91,17 +91,38 @@ def encrypt(codebook, message):
 
 def decrypt(rev_book, ciphertext):
     plaintext = []
-    for char in ciphertext:
-        pass
+    for idx in re.findall(r'\d+-\d+-\d+-', ciphertext):
+        page, line, char = idx.split('-')
+        plaintext.append(rev_book[page][line][int(char)])
     return ''.join(plaintext)
+
+def m_menu():
+    print("""1. Encrypt\n2. Decrypt\n3. Quit""")
+    return int(input("Make a selection [1, 2, 3]: \n"))
 
 
 def main():
     books = ('books/dr_jekyll.txt', 'books/shakespeare.txt', 'books/war_and_peace.txt')
     codebook_path = 'codebooks/cd.json'
     rev_book_path = 'codebooks/rv.json'
-    codebook = load_file(codebook_path, *books)
-    reverse_book = load_file(rev_book_path, *books, reverse=True)
+    while True:
+        try:
+            mode = m_menu()
+            match(mode):
+                case 1:
+                    codebook = load_file(codebook_path, *books)
+                    message = input("Enter plaintext: \n")
+                    print(encrypt(codebook, message))
+                    continue
+                case 2:
+                    reverse_book = load_file(rev_book_path, *books, reverse=True)
+                    message = input("Enter ciphertext: \n")
+                    print(decrypt(reverse_book, message))
+                    continue
+                case 3:
+                    sys.exit(0)
+        except ValueError as val_err:
+            print("Invalid input.")
 
 if __name__ == '__main__':
     main()
