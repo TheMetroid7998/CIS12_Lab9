@@ -78,7 +78,7 @@ def walk_images(directory):
             walk_images(path)
 
 def main():
-    with open('CH13/photos/digests', 'n') as img_db:
+    with shelve.open('CH13/photos/digests', 'n') as img_db:
         walk_images('CH13/photos')
 
     for digest, paths in img_db.items():
